@@ -4,7 +4,7 @@
  * Plugin URI: https://razorfrog.com/spinitron-player/
  * Description: A streaming player for radio stations using Spinitron, with live data integration.
  * Author: Razorfrog Web Design
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author URI: https://razorfrog.com/
  * License: GPLv2 or later
  * Text Domain: spinitron-player
@@ -45,60 +45,86 @@ add_action('wp_enqueue_scripts', 'Spinitron_Player_Enqueue_styles');
  * Initializes the Spinitron Player plugin settings by registering settings, sections, and fields.
  *
  * This function sets up the configuration for the Spinitron Player plugin in the WordPress admin dashboard.
- * It registers a new setting for the plugin, adds a settings section, and then adds fields within that section 
+ * It registers a new setting for the plugin, adds a settings section, and then adds fields within that section
  * for the API key and stream URL, each handled by its respective callback function for rendering the HTML input elements.
  *
  * @return void
  */
-function Spinitron_Player_Settings_init()
-{
-    register_setting('spinitron_player', 'spinitron_player_options');
+function Spinitron_Player_Settings_init() {
+     register_setting('spinitron_player', 'spinitron_player_options');
 
-    add_settings_section(
-        'spinitron_player_section_developers',
-        __('Source Settings', 'spinitron-player'),
-        'Spinitron_Player_Section_Developers_cb',
-        'spinitron_player'
-    );
+     add_settings_section(
+         'spinitron_player_section_developers',
+         __('Source Settings', 'spinitron-player'),
+         'Spinitron_Player_Section_Developers_cb',
+         'spinitron_player'
+     );
 
-    add_settings_field(
-        'spinitron_player_field_api_key',
-        __('API Key (required)', 'spinitron-player'),
-        'Spinitron_Player_Field_Api_Key_cb',
-        'spinitron_player',
-        'spinitron_player_section_developers',
-        array(
-            'label_for'                    => 'spinitron_player_field_api_key',
-            'class'                        => 'spinitron_player_row',
-            'spinitron_player_custom_data' => 'custom',
-        )
-    );
+     add_settings_field(
+         'spinitron_player_field_api_key',
+         __('API Key (required)', 'spinitron-player'),
+         'Spinitron_Player_Field_Api_Key_cb',
+         'spinitron_player',
+         'spinitron_player_section_developers',
+         array(
+             'label_for'                    => 'spinitron_player_field_api_key',
+             'class'                        => 'spinitron_player_row',
+             'spinitron_player_custom_data' => 'custom',
+         )
+     );
 
-    add_settings_field(
-        'spinitron_player_field_stream_url',
-        __('Stream URL (optional)', 'spinitron-player'),
-        'Spinitron_Player_Field_Stream_Url_cb',
-        'spinitron_player',
-        'spinitron_player_section_developers',
-        array(
-            'label_for'                    => 'spinitron_player_field_stream_url',
-            'class'                        => 'spinitron_player_row',
-            'spinitron_player_custom_data' => 'custom',
-        )
-    );
-}
-add_action('admin_init', 'Spinitron_Player_Settings_init');
+     add_settings_field(
+         'spinitron_player_field_stream_url',
+         __('Stream URL (optional)', 'spinitron-player'),
+         'Spinitron_Player_Field_Stream_Url_cb',
+         'spinitron_player',
+         'spinitron_player_section_developers',
+         array(
+             'label_for'                    => 'spinitron_player_field_stream_url',
+             'class'                        => 'spinitron_player_row',
+             'spinitron_player_custom_data' => 'custom',
+         )
+     );
+
+     add_settings_field(
+         'spinitron_player_field_separate_time_dj',
+         __('Separate Time and DJ', 'spinitron-player'),
+         'Spinitron_Player_Field_Separate_Time_DJ_cb',
+         'spinitron_player',
+         'spinitron_player_section_developers',
+         array(
+             'label_for'                    => 'spinitron_player_field_separate_time_dj',
+             'class'                        => 'spinitron_player_row',
+             'spinitron_player_custom_data' => 'custom',
+         )
+     );
+
+     add_settings_field(
+         'spinitron_player_field_duplicate_show_image',
+         __('Duplicate Show Image', 'spinitron-player'),
+         'Spinitron_Player_Field_Duplicate_Show_Image_cb',
+         'spinitron_player',
+         'spinitron_player_section_developers',
+         array(
+             'label_for'                    => 'spinitron_player_field_duplicate_show_image',
+             'class'                        => 'spinitron_player_row',
+             'spinitron_player_custom_data' => 'custom',
+         )
+     );
+ }
+ add_action('admin_init', 'Spinitron_Player_Settings_init');
+
 
 
 /**
  * Outputs the developers section description for Spinitron Player settings.
  *
- * This function generates the HTML for the description paragraph of the developers section 
- * in the Spinitron Player settings page. It uses the `$args` parameter to apply an ID to the paragraph element, 
+ * This function generates the HTML for the description paragraph of the developers section
+ * in the Spinitron Player settings page. It uses the `$args` parameter to apply an ID to the paragraph element,
  * which helps in targeting the element for styling or scripting.
  *
  * @param array $args Configuration for the section, including 'id' for targeting the paragraph element.
- * 
+ *
  * @return void
  */
 function Spinitron_Player_Section_Developers_cb( $args )
@@ -124,7 +150,7 @@ function Spinitron_Player_Field_Api_Key_cb( $args )
 {
     $options = get_option('spinitron_player_options');
     ?>
-    <input type="text" 
+    <input type="text"
             id="<?php echo esc_attr($args['label_for']); ?>"
             data-custom="<?php echo esc_attr($args['spinitron_player_custom_data']); ?>"
             name="spinitron_player_options[<?php echo esc_attr($args['label_for']); ?>]"
@@ -149,7 +175,7 @@ function Spinitron_Player_Field_Stream_Url_cb( $args )
 {
     $options = get_option('spinitron_player_options');
     ?>
-    <input type="url" 
+    <input type="url"
             id="<?php echo esc_attr($args['label_for']); ?>"
             data-custom="<?php echo esc_attr($args['spinitron_player_custom_data']); ?>"
             name="spinitron_player_options[<?php echo esc_attr($args['label_for']); ?>]"
@@ -160,10 +186,52 @@ function Spinitron_Player_Field_Stream_Url_cb( $args )
 
 
 /**
+ * Outputs the Separate Time and DJ checkbox in plugin settings.
+ *
+ * Renders an HTML checkbox input for the 'Separate Time and DJ' setting in the Spinitron Player plugin.
+ * This function uses the `$args` parameter to set HTML attributes like `id` and applies the `checked` state
+ * based on the stored option value.
+ *
+ * @param array $args Configuration for the field, including 'label_for' and 'spinitron_player_custom_data'.
+ *
+ * @return void
+ */
+function Spinitron_Player_Field_Separate_Time_DJ_cb($args) {
+    $options = get_option('spinitron_player_options');
+    $checked = isset($options['separate_time_dj']) ? $options['separate_time_dj'] : 0;
+    ?>
+    <input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[separate_time_dj]" value="1" <?php checked($checked, 1); ?> />
+    <label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Enable this option to separate time and DJ.', 'spinitron-player'); ?></label>
+    <?php
+}
+
+
+/**
+ * Outputs the Duplicate Show Image checkbox in plugin settings.
+ *
+ * Renders an HTML checkbox input for the 'Duplicate Show Image' setting in the Spinitron Player plugin.
+ * This function uses the `$args` parameter to set HTML attributes like `id` and applies the `checked` state
+ * based on the stored option value.
+ *
+ * @param array $args Configuration for the field, including 'label_for' and 'spinitron_player_custom_data'.
+ *
+ * @return void
+ */
+function Spinitron_Player_Field_Duplicate_Show_Image_cb($args) {
+    $options = get_option('spinitron_player_options');
+    $checked = isset($options['duplicate_show_image']) ? $options['duplicate_show_image'] : 0;
+    ?>
+    <input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[duplicate_show_image]" value="1" <?php checked($checked, 1); ?> />
+    <label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Enable this option to duplicate the show image.', 'spinitron-player'); ?></label>
+    <?php
+}
+
+
+/**
  * Registers the Spinitron Player settings page in the WordPress admin area.
  *
  * This function adds the Spinitron Player settings page to the WordPress admin menu.
- * It defines the page title, menu title, required capability to access the page, 
+ * It defines the page title, menu title, required capability to access the page,
  * the menu slug, and the function that will render the settings page HTML.
  *
  * @return void
@@ -197,7 +265,7 @@ function Spinitron_Player_Options_Page_html()
     }
 
     settings_errors('spinitron_player_messages');
-    
+
     ?>
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>

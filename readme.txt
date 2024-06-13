@@ -2,9 +2,9 @@
 Contributors: razorfrog
 Tags: spinitron, radio, music, player, stream
 Requires at least: 5.0
-Tested up to: 6.5.0
+Tested up to: 6.5.4
 Requires PHP: 7.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,5 +40,10 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+= 1.0.1 =
+- Added checkbox "Separate Time and DJ"
+- Added checkbox "Duplicate Show Image"
+- WP Core compatibility update
+
 = 1.0.0 =
 - Initial release.

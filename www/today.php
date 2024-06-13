@@ -15,10 +15,15 @@
  * @link     https://razorfrog.com/
  */
 
- 
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require plugin_dir_path(__FILE__) . '../app/get-client.php';
+
+// Retrieve plugin options
+$options = get_option('spinitron_player_options');
+$separate_time_dj = isset($options['separate_time_dj']) ? $options['separate_time_dj'] : 0;
+$duplicate_show_image = isset($options['duplicate_show_image']) ? $options['duplicate_show_image'] : 0;
 
 $shows = $client->search('shows', array( 'count' => 1 ));
 
@@ -42,17 +47,28 @@ foreach ( $shows['items'] as $show ) :
         $show_status = 'Up next';
     }
 
-    echo(
-    '<div class="spinitron-player">
-            <div class="show-image">
-                <img src="' . esc_html($show_image) . '" alt="' . esc_attr($show_title) . '" />
-            </div>
-            <div class="show-details">
-                <p class="show-status">' . esc_html($show_status) . '</p>
-                <p class="show-title">' . esc_html($show_title) . '</p>
-                <p class="show-time">' . esc_html($show_start->format('g:i A')) . ' - ' . esc_html($show_end->format('g:i A')) . ' with ' . esc_html($show_dj) . '</p>
-            </div>
-        </div>'
-    );
+    echo '<div class="spinitron-player">';
+
+    // Check if the duplicate_show_image option is enabled
+    if ($duplicate_show_image) {
+        echo '<img class="show-image-outter" src="' . esc_html($show_image) . '" alt="' . esc_attr($show_title) . '" />';
+    }
+
+    echo '<div class="show-image">
+        <img src="' . esc_html($show_image) . '" alt="' . esc_attr($show_title) . '" />
+        </div>
+        <div class="show-details">
+        <p class="show-status">' . esc_html($show_status) . '</p>
+        <p class="show-title">' . esc_html($show_title) . '</p>';
+
+    // Check if the separate_time_dj option is enabled
+    if ($separate_time_dj) {
+        echo '<p class="show-time">' . esc_html($show_start->format('g:i A')) . ' - ' . esc_html($show_end->format('g:i A')) . '</p>
+            <p class="show-dj">With ' . esc_html($show_dj) . '</p>';
+    } else {
+        echo '<p class="show-time">' . esc_html($show_start->format('g:i A')) . ' - ' . esc_html($show_end->format('g:i A')) . ' with ' . esc_html($show_dj) . '</p>';
+    }
+
+    echo '</div></div>';
 
 endforeach;

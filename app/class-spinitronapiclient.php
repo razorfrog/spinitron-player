@@ -44,9 +44,9 @@ if (!class_exists('SpinitronApiClient')) {
          * @var array
          */
         protected static $cache_timeout = array(
-            'personas'  => 900,
-            'shows'     => 900,
-            'playlists' => 300,
+            'personas'  => 60, // 1 minute
+            'shows'     => 60, // 1 minute
+            'playlists' => 60, // 1 minute
             'spins'     => 30,
         );
 
@@ -136,8 +136,10 @@ if (!class_exists('SpinitronApiClient')) {
             $response = $this->queryApi($url);
 
             // Save the response in the transient, with expiration.
-            $timeout = static::$cache_timeout[ $endpoint ];
-            set_transient($cache_key, $response, $timeout);
+            if ($response) {
+                $timeout = static::$cache_timeout[$endpoint] ?? 60;
+                set_transient($cache_key, $response, $timeout);
+            }
 
             return $response;
         }

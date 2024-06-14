@@ -4,7 +4,7 @@
  * Plugin URI: https://razorfrog.com/spinitron-player/
  * Description: A streaming player for radio stations using Spinitron, with live data integration.
  * Author: Razorfrog Web Design
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author URI: https://razorfrog.com/
  * License: GPLv2 or later
  * Text Domain: spinitron-player
@@ -27,12 +27,12 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 function Spinitron_Player_Enqueue_assets() {
     // Enqueue the plugin's CSS file
     $css_url = plugin_dir_url(__FILE__) . 'style.css';
-    $css_version = '0.0.4';
+    $css_version = '1.0.4';
     wp_enqueue_style('spinitron-player-styles', $css_url, array(), $css_version);
 
     // Enqueue the JavaScript file for fetching show data
     $js_url = plugin_dir_url(__FILE__) . 'js/spinitron-fetch-today.js';
-    $js_version = '0.0.1';
+    $js_version = '1.0.21';
     wp_enqueue_script('spinitron-player-fetch-today', $js_url, array('jquery'), $js_version, true);
     wp_localize_script('spinitron-player-fetch-today', 'spinitron_params', array(
         'ajax_url' => admin_url('admin-ajax.php'),
@@ -56,25 +56,14 @@ include plugin_dir_path(__FILE__) . 'ajax/ajax-handler-today.php';
  * @return string The HTML content for the Spinitron show container.
  */
 function Spinitron_Player_shortcode() {
-    // Retrieve the fallback image from the settings
-    $options = get_option('spinitron_player_options');
-    $fallback_image = isset($options['spinitron_player_field_image_fallback']) ? esc_url($options['spinitron_player_field_image_fallback']) : 'placeholder.jpg';
+    global $spinitron_instance_count;
+    if (!isset($spinitron_instance_count)) {
+        $spinitron_instance_count = 0;
+    }
+    $spinitron_instance_count++;
 
     ob_start();
-    ?>
-    <div id="spinitron-show-container">
-        <div class="spinitron-player">
-            <div class="show-image">
-                <img src="<?php echo $fallback_image; ?>" alt="Show Title Placeholder" />
-            </div>
-            <div class="show-details">
-                <p class="show-status">Loading...</p>
-                <p class="show-title">Loading...</p>
-                <p class="show-time-dj">Loading...</p>
-            </div>
-        </div>
-    </div>
-    <?php
+    include plugin_dir_path(__FILE__) . 'ui/today.php';
     return ob_get_clean();
 }
 add_shortcode('spinitron_player', 'Spinitron_Player_shortcode');

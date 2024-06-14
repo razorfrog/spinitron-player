@@ -208,7 +208,7 @@ function Spinitron_Player_Field_Api_Key_cb($args) {
  */
 function Spinitron_Player_Field_Image_Fallback_cb($args) {
 		$options = get_option('spinitron_player_options');
-		$fallback_image = isset($options['spinitron_player_field_image_fallback']) ? $options['spinitron_player_field_image_fallback'] : '';
+		$fallback_image = isset($options[$args['label_for']]) ? $options[$args['label_for']] : '';
 		?>
 		<input type="text"
 					 id="<?php echo esc_attr($args['label_for']); ?>"
@@ -250,9 +250,9 @@ function Spinitron_Player_Field_Stream_Url_cb($args) {
  */
 function Spinitron_Player_Field_Separate_Time_DJ_cb($args) {
 		$options = get_option('spinitron_player_options');
-		$checked = isset($options['separate_time_dj']) ? $options['separate_time_dj'] : 0;
+		$checked = isset($options[$args['label_for']]) ? $options[$args['label_for']] : 0;
 		?>
-		<input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[separate_time_dj]" value="1" <?php checked($checked, 1); ?> />
+		<input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[<?php echo esc_attr($args['label_for']); ?>]" value="1" <?php checked($checked, 1); ?> />
 		<label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Separate the show time and DJ name into <p class="show-time"> and <p class="show-dj"> elements. This is useful for better readability and to style the show schedule and the DJ’s name individually. If unselected, the show time and DJ name will be displayed together in a single <p class="show-time-dj"> element.', 'spinitron-player'); ?></label>
 		<?php
 }
@@ -266,9 +266,9 @@ function Spinitron_Player_Field_Separate_Time_DJ_cb($args) {
  */
 function Spinitron_Player_Field_Duplicate_Show_Image_cb($args) {
 		$options = get_option('spinitron_player_options');
-		$checked = isset($options['duplicate_show_image']) ? $options['duplicate_show_image'] : 0;
+		$checked = isset($options[$args['label_for']]) ? $options[$args['label_for']] : 0;
 		?>
-		<input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[duplicate_show_image]" value="1" <?php checked($checked, 1); ?> />
+		<input type="checkbox" id="<?php echo esc_attr($args['label_for']); ?>" name="spinitron_player_options[<?php echo esc_attr($args['label_for']); ?>]" value="1" <?php checked($checked, 1); ?> />
 		<label for="<?php echo esc_attr($args['label_for']); ?>"><?php esc_html_e('Display the show’s image twice: once above the show’s details and once within the details section. This is useful for layouts that prominently feature the show’s image within the content while also having the flexibility to use the additional image for styling purposes, such as placing it as a background.', 'spinitron-player'); ?></label>
 		<?php
 }

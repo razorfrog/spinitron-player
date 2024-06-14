@@ -36,10 +36,12 @@
 .spinitron-player .show-details .show-title {
     font-size: 22px;
     font-weight: 700;
-    margin: 5px 0;
+    margin: 0;
 }
 
-.spinitron-player .show-details .show-time {
+.spinitron-player .show-details .show-time-dj,
+.spinitron-player .show-details .show-time,
+.spinitron-player .show-details .show-dj {
     font-size: 14px;
     margin: 0;
 }

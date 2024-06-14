@@ -14,8 +14,8 @@ function fetch_spinitron_show_today_callback() {
 
 		// Retrieve plugin options
 		$options = get_option('spinitron_player_options');
-		$separate_time_dj = isset($options['separate_time_dj']) ? $options['separate_time_dj'] : 0;
-		$duplicate_show_image = isset($options['duplicate_show_image']) ? $options['duplicate_show_image'] : 0;
+		$separate_time_dj = isset($options['spinitron_player_field_separate_time_dj']) ? $options['spinitron_player_field_separate_time_dj'] : 0;
+		$duplicate_show_image = isset($options['spinitron_player_field_duplicate_show_image']) ? $options['spinitron_player_field_duplicate_show_image'] : 0;
 
 		// Ensure the fallback image is set, since it's required
 		$fallback_image = '';

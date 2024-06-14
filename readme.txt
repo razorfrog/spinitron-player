@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.0
 Tested up to: 6.5.4
 Requires PHP: 7.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,9 +41,16 @@ We will be working on new UI options in future releases.
 
 == Changelog ==
 
+= 1.0.4 =
+- Added ui/today.php
+- Updated style.css
+- Updated API validations
+- Updated player loading interface
+- Updated shortcode to allow multiple instances
+
 = 1.0.3 =
-- Added ajax-handler-today.php
-- Added spinitron-fetch-today.js
+- Added ajax/ajax-handler-today.php
+- Added app/spinitron-fetch-today.js
 - Updated shortcode player builder
 - Updated entire code structure
 - Updated entire cache handling

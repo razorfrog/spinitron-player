@@ -4,7 +4,6 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
  * Initializes the Spinitron Player plugin settings by registering settings, sections, and fields.
- *
  * @return void
  */
 function Spinitron_Player_Settings_init() {
@@ -86,7 +85,6 @@ add_action('admin_init', 'Spinitron_Player_Settings_init');
 
 /**
  * Registers the Spinitron Player settings page in the WordPress admin area.
- *
  * @return void
  */
 function Spinitron_Player_Options_page() {
@@ -102,7 +100,6 @@ add_action('admin_menu', 'Spinitron_Player_Options_page');
 
 /**
  * Renders the HTML for the Spinitron Player options page in the admin area.
- *
  * @return void
  */
 function Spinitron_Player_Options_Page_html() {
@@ -128,11 +125,7 @@ function Spinitron_Player_Options_Page_html() {
 
 /**
  * Enqueue custom styles for the Spinitron Player settings page.
- *
- * This function adds inline CSS to the admin area to style the settings table.
- *
  * @param string $hook_suffix The current admin page.
- *
  * @return void
  */
 function spinitron_player_admin_styles($hook_suffix) {
@@ -167,9 +160,7 @@ add_action('admin_enqueue_scripts', 'spinitron_player_admin_styles');
 
 /**
  * Outputs the developers section description for Spinitron Player settings.
- *
  * @param array $args Configuration for the section.
- *
  * @return void
  */
 function Spinitron_Player_Section_Developers_cb($args) {
@@ -180,9 +171,7 @@ function Spinitron_Player_Section_Developers_cb($args) {
 
 /**
  * Renders the API Key input field in plugin settings.
- *
  * @param array $args Configuration for the field.
- *
  * @return void
  */
 function Spinitron_Player_Field_Api_Key_cb($args) {
@@ -197,13 +186,14 @@ function Spinitron_Player_Field_Api_Key_cb($args) {
 					 required>
 		<p class="description"><?php esc_html_e('Find the API key at spinitron.com, under Admin > Automation & API > Control Panel.', 'spinitron-player'); ?></p>
 		<?php
+
+		// Clear the transient cache when the API key is updated
+		delete_transient('spinitron_show_today');
 }
 
 /**
  * Outputs the Image Fallback input field in plugin settings.
- *
  * @param array $args Configuration for the field.
- *
  * @return void
  */
 function Spinitron_Player_Field_Image_Fallback_cb($args) {
@@ -223,9 +213,7 @@ function Spinitron_Player_Field_Image_Fallback_cb($args) {
 
 /**
  * Renders the Stream URL input field in plugin settings.
- *
  * @param array $args Configuration for the field.
- *
  * @return void
  */
 function Spinitron_Player_Field_Stream_Url_cb($args) {
@@ -243,9 +231,7 @@ function Spinitron_Player_Field_Stream_Url_cb($args) {
 
 /**
  * Outputs the Separate Time and DJ checkbox in plugin settings.
- *
  * @param array $args Configuration for the field.
- *
  * @return void
  */
 function Spinitron_Player_Field_Separate_Time_DJ_cb($args) {
@@ -259,9 +245,7 @@ function Spinitron_Player_Field_Separate_Time_DJ_cb($args) {
 
 /**
  * Outputs the Duplicate Show Image checkbox in plugin settings.
- *
  * @param array $args Configuration for the field.
- *
  * @return void
  */
 function Spinitron_Player_Field_Duplicate_Show_Image_cb($args) {

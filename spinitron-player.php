@@ -4,7 +4,7 @@
  * Plugin URI: https://razorfrog.com/spinitron-player/
  * Description: A streaming player for radio stations using Spinitron, with live data integration.
  * Author: Razorfrog Web Design
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author URI: https://razorfrog.com/
  * License: GPLv2 or later
  * Text Domain: spinitron-player
@@ -27,12 +27,12 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 function Spinitron_Player_Enqueue_assets() {
     // Enqueue the plugin's CSS file
     $css_url = plugin_dir_url(__FILE__) . 'style.css';
-    $css_version = '1.0.4';
+    $css_version = '1.0.5';
     wp_enqueue_style('spinitron-player-styles', $css_url, array(), $css_version);
 
     // Enqueue the JavaScript file for fetching show data
     $js_url = plugin_dir_url(__FILE__) . 'js/spinitron-fetch-today.js';
-    $js_version = '1.0.21';
+    $js_version = '1.0.5';
     wp_enqueue_script('spinitron-player-fetch-today', $js_url, array('jquery'), $js_version, true);
     wp_localize_script('spinitron-player-fetch-today', 'spinitron_params', array(
         'ajax_url' => admin_url('admin-ajax.php'),

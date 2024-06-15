@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.0
 Tested up to: 6.5.4
 Requires PHP: 7.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,11 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.0.5 =
+- Improved API client requests
+- Improved WordPress transients
+- Improved AJAX request handling
 
 = 1.0.4 =
 - Added ui/today.php

@@ -4,7 +4,7 @@
  * Plugin URI: https://razorfrog.com/spinitron-player/
  * Description: A streaming player for radio stations using Spinitron, with live data integration.
  * Author: Razorfrog Web Design
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author URI: https://razorfrog.com/
  * License: GPLv2 or later
  * Text Domain: spinitron-player

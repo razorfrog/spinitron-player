@@ -59,8 +59,13 @@ function fetch_spinitron_show_today_callback() {
 				$show_dj = esc_html($persona_array['name']);
 
 				// Check if the image URL is valid
-				$headers = @get_headers($show_image);
-				if (!$headers || strpos($headers[0], '200') === false) {
+				if (!empty($show_image)) {
+						$headers = @get_headers($show_image);
+						if (!$headers || strpos($headers[0], '200') === false) {
+								$show_image = $fallback_image;
+						}
+				} else {
+						error_log('Show image URL is empty. Using fallback image.');
 						$show_image = $fallback_image;
 				}
 

@@ -7,6 +7,17 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * @return void
  */
 function fetch_spinitron_show_today_callback() {
+		// Prevent browser and server-side caching
+		header("Expires: 0");
+		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+		header("Pragma: no-cache");
+		header("Content-Type: text/html; charset=utf-8");
+
+		// Clear any output buffers that might interfere
+		if (ob_get_length()) {
+				ob_clean();
+		}
+
 		require plugin_dir_path(__FILE__) . '../app/spinitron-get-client.php';
 
 		global $client;

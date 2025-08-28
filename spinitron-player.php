@@ -4,7 +4,7 @@
  * Plugin URI: https://razorfrog.com/spinitron-player/
  * Description: A streaming player for radio stations using Spinitron, with live data integration.
  * Author: Razorfrog Web Design
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author URI: https://razorfrog.com/
  * License: GPLv2 or later
  * Text Domain: spinitron-player
@@ -79,64 +79,99 @@ add_shortcode('spinitron_player', 'Spinitron_Player_shortcode');
  * @return string The HTML content for the play button and associated script.
  */
 function Spinitron_Play_Button_shortcode() {
-    static $audio_added = false;
-    ob_start();
+     ob_start();
 
-    // Retrieve the entire options array for your plugin.
-    $spinitron_player_options = get_option('spinitron_player_options', '');
+     // Get URL from settings safely, with a fallback for testing
+     $opts = get_option('spinitron_player_options', array());
+     if (!is_array($opts)) { $opts = array(); }
+     $stream_url = !empty($opts['spinitron_player_field_stream_url'])
+         ? $opts['spinitron_player_field_stream_url']
+         : 'https://kspc.radioca.st/stream?type=http&nocache=41177';
 
-    // Check if the option is retrieved successfully and is not empty.
-    if (!empty($spinitron_player_options) && is_array($spinitron_player_options)) {
+     // Hidden shared audio id; button markup remains unchanged
+     $audio_id  = 'spinitron-stream-shared-hidden';
+     $btn_class = 'spinitron-stream-button';
+     ?>
+     <!-- Button markup kept IDENTICAL to your original -->
+     <button id="spinitron-stream-button" class="spinitron-stream-button" aria-controls="radioStream" aria-label="<?php echo esc_attr(__('Play', 'spinitron-player')); ?>" role="button">
+         <span class="spinitron-stream-button-text"><?php echo esc_html(__('Play', 'spinitron-player')); ?></span>
+     </button>
 
-        // Access the specific setting from the array.
-        $stream_url = isset($spinitron_player_options['spinitron_player_field_stream_url']) ? $spinitron_player_options['spinitron_player_field_stream_url'] : '';
+     <script>
+     (function(){
+       var AUDIO_ID   = '<?php echo esc_js($audio_id); ?>';
+       var STREAM_URL = '<?php echo esc_js( esc_url_raw( $stream_url ) ); ?>';
+       var BTN_CLASS  = '<?php echo esc_js($btn_class); ?>';
 
-        // Proceeds only if there is a stream URL entered.
-        if (!empty($stream_url)) {
+       // Singleton: one hidden audio, many buttons
+       window.SpinitronSharedAudio = window.SpinitronSharedAudio || {
+         initOnce: false,
+         audio: null,
+         setState: function(playing){
+           // Keep all buttons in sync (text + aria)
+           document.querySelectorAll('.' + BTN_CLASS).forEach(function(btn){
+             var span = btn.querySelector('.spinitron-stream-button-text');
+             if (span) span.textContent = playing ? '<?php echo esc_js(__('Pause', 'spinitron-player')); ?>' : '<?php echo esc_js(__('Play', 'spinitron-player')); ?>';
+             btn.setAttribute('aria-label', playing ? '<?php echo esc_js(__('Pause', 'spinitron-player')); ?>' : '<?php echo esc_js(__('Play', 'spinitron-player')); ?>');
+             btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+           });
+         }
+       };
+       var SA = window.SpinitronSharedAudio;
 
-            if (!$audio_added) {
-                ?>
-                <!-- Only add the audio element once -->
-                <audio id="spinitron-stream" src="<?php echo esc_url($stream_url); ?>" type="audio/mpeg" style="display:none;"></audio>
-                <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var radioStream = document.getElementById('spinitron-stream');
+       if (!SA.initOnce) {
+         SA.initOnce = true;
 
-                    // Function to update all play button texts and aria-labels.
-                    function updatePlayButtons(isPlaying) {
-                        var playButtons = document.querySelectorAll('.spinitron-stream-button-text');
-                        playButtons.forEach(function(buttonText) {
-                            buttonText.textContent = isPlaying ? '<?php echo esc_js(__('Pause', 'spinitron-player')); ?>' : '<?php echo esc_js(__('Play', 'spinitron-player')); ?>';
-                            buttonText.closest('button').setAttribute('aria-label', isPlaying ? '<?php echo esc_attr(__('Pause', 'spinitron-player')); ?>' : '<?php echo esc_attr(__('Play', 'spinitron-player')); ?>');
-                        });
-                    }
+         // Create one hidden audio element
+         var audio = document.getElementById(AUDIO_ID);
+         if (!audio) {
+           audio = document.createElement('audio');
+           audio.id = AUDIO_ID;
+           audio.src = STREAM_URL;
+           audio.preload = 'none';
+           audio.crossOrigin = 'anonymous';
+           audio.style.display = 'none';
+           document.body.appendChild(audio);
+         }
+         SA.audio = audio;
 
-                    // Event listener for all play button clicks.
-                    document.body.addEventListener('click', function (e) {
-                        if (e.target.classList.contains('spinitron-stream-button') || e.target.closest('.spinitron-stream-button')) {
-                            if (radioStream.paused) {
-                                radioStream.play(); // Play the stream.
-                                updatePlayButtons(true); // Update all buttons to 'Pause'.
-                            } else {
-                                radioStream.pause(); // Pause the stream.
-                                updatePlayButtons(false); // Update all buttons to 'Play'.
-                            }
-                        }
-                    });
-                });
-                </script>
-                <?php
-                $audio_added = true;
-            }
-            ?>
-            <!-- Radio Stream Play/Pause Button for Accessibility, works with multiple instances -->
-            <button id="spinitron-stream-button" class="spinitron-stream-button" aria-controls="radioStream" aria-label="<?php echo esc_attr(__('Play', 'spinitron-player')); ?>" role="button">
-                <span class="spinitron-stream-button-text"><?php echo esc_html(__('Play', 'spinitron-player')); ?></span>
-            </button>
-            <?php
-        }
-    }
+         // Native events keep all buttons synced
+         audio.addEventListener('play',  function(){ SA.setState(true);  });
+         audio.addEventListener('pause', function(){ SA.setState(false); });
+         audio.addEventListener('ended', function(){ SA.setState(false); });
 
-    return ob_get_clean(); // Return the buffered content.
-}
-add_shortcode('spinitron_play_button', 'Spinitron_Play_Button_shortcode');
+         // Global delegation: any .spinitron-stream-button toggles the shared audio
+         document.addEventListener('click', async function(e){
+           var btn = e.target.closest && e.target.closest('.' + BTN_CLASS);
+           if (!btn) return;
+           e.preventDefault();
+           try {
+             if (SA.audio.paused) {
+               if (SA.audio.src !== STREAM_URL) SA.audio.src = STREAM_URL; // defensive
+               await SA.audio.play();
+               SA.setState(true);
+             } else {
+               SA.audio.pause();
+               SA.setState(false);
+             }
+           } catch (err) {
+             console.error('Playback error:', err);
+             SA.setState(false);
+           }
+         });
+
+         // Initialize UI for any buttons already on the page
+         SA.setState(!SA.audio.paused);
+       } else {
+         // If audio already exists, sync this instance's button immediately
+         SA.setState(SA.audio && !SA.audio.paused);
+       }
+     })();
+     </script>
+     <?php
+
+     return ob_get_clean();
+ }
+ add_shortcode('spinitron_play_button', 'Spinitron_Play_Button_shortcode');
+
+ ?>

@@ -7,7 +7,13 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * @return void
  */
 function Spinitron_Player_Settings_init() {
-		register_setting('spinitron_player', 'spinitron_player_options');
+		register_setting(
+			 'spinitron_player',
+			 'spinitron_player_options',
+			 array(
+				  'sanitize_callback' => 'spinitron_player_sanitize_options',
+			 )
+		);
 
 		add_settings_section(
 				'spinitron_player_section_developers',
@@ -82,6 +88,56 @@ function Spinitron_Player_Settings_init() {
 		);
 }
 add_action('admin_init', 'Spinitron_Player_Settings_init');
+
+/**
+ * Sanitize and validate Spinitron Player options.
+ *
+ * @param array $input Raw input from the settings form.
+ * @return array Sanitized options.
+ */
+function spinitron_player_sanitize_options( $input ) {
+
+	$input   = is_array( $input ) ? $input : array();
+	$output  = array();
+	$options = get_option( 'spinitron_player_options', array() );
+
+	// API Key (text)
+	if ( isset( $input['spinitron_player_field_api_key'] ) ) {
+		  $output['spinitron_player_field_api_key'] = sanitize_text_field(
+				$input['spinitron_player_field_api_key']
+		  );
+
+		  // If API key changed, clear transient cache.
+		  if (
+				empty( $options['spinitron_player_field_api_key'] ) ||
+				$options['spinitron_player_field_api_key'] !== $output['spinitron_player_field_api_key']
+		  ) {
+				delete_transient( 'spinitron_show_today' );
+		  }
+	}
+
+	// Image Fallback (URL)
+	if ( isset( $input['spinitron_player_field_image_fallback'] ) ) {
+		  $output['spinitron_player_field_image_fallback'] = esc_url_raw(
+				$input['spinitron_player_field_image_fallback']
+		  );
+	}
+
+	// Stream URL (URL)
+	if ( isset( $input['spinitron_player_field_stream_url'] ) ) {
+		  $output['spinitron_player_field_stream_url'] = esc_url_raw(
+				$input['spinitron_player_field_stream_url']
+		  );
+	}
+
+	// Separate Time & DJ (checkbox)
+	$output['spinitron_player_field_separate_time_dj'] = ! empty( $input['spinitron_player_field_separate_time_dj'] ) ? 1 : 0;
+
+	// Duplicate Show Image (checkbox)
+	$output['spinitron_player_field_duplicate_show_image'] = ! empty( $input['spinitron_player_field_duplicate_show_image'] ) ? 1 : 0;
+
+	return $output;
+}
 
 /**
  * Registers the Spinitron Player settings page in the WordPress admin area.

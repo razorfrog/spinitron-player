@@ -1,12 +1,12 @@
 === Spinitron Player ===
 Contributors: razorfrog
 Tags: spinitron, radio, music, player, stream
-Requires at least: 5.0
-Tested up to: 6.8.2
+Requires at least: 5.2
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A streaming player for radio stations using Spinitron, with live data integration.
 
@@ -40,6 +40,10 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.0.9 =
+- Security updates
+- Updated for WP Core compatibility
 
 = 1.0.8 =
 - Fixed play button JS trigger

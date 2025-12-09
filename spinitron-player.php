@@ -1,20 +1,17 @@
 <?php
+
 /**
- * Plugin Name: Spinitron Player
- * Plugin URI: https://razorfrog.com/spinitron-player/
- * Description: A streaming player for radio stations using Spinitron, with live data integration.
- * Author: Razorfrog Web Design
- * Version: 1.0.8
- * Author URI: https://razorfrog.com/
- * License: GPLv2 or later
- * Text Domain: spinitron-player
- * Requires at least: 6.0
- * Requires PHP: 7.2
- *
- * PHP version 7.2
- *
- * @category Media
- * @package SpinitronPlayer
+ * Plugin Name:       Spinitron Player
+ * Plugin URI:        https://razorfrog.com/spinitron-player/
+ * Description:       A streaming player for radio stations using Spinitron.
+ * Version:           1.0.9
+ * Requires at least: 5.2
+ * Requires PHP:      7.2
+ * Author:            Razorfrog Web Design
+ * Author URI:        https://razorfrog.com/
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       spinitron-player
  */
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly

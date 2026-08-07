@@ -39,27 +39,72 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 	$shows = get_transient( 'spinitron_show_today' );
 
 	if ( false === $shows ) {
-		// If the transient doesn't exist, fetch from API
-		$shows = $spinitron_player_client->search(
-			'shows',
-			array(
-				'count'      => 1,
-				'cache_bust' => time(),
-			)
-		);
+		try {
+			// If the transient doesn't exist, fetch from API
+			$shows = $spinitron_player_client->search(
+				'shows',
+				array(
+					'count'      => 1,
+					'cache_bust' => time(),
+				)
+			);
 
-		if ( empty( $shows['items'] ) ) {
-			echo '<p>No shows found. Please check the Spinitron API for available shows.</p>';
+			if ( empty( $shows['items'] ) ) {
+				echo '<p>No shows found. Please check the Spinitron API for available shows.</p>';
+				wp_die();
+			}
+
+			// Resolve the DJ name and validate the show image once per fetch
+			// (instead of inside the render loop below) so both are cached
+			// alongside the show data rather than re-requested from Spinitron,
+			// and re-validated over HTTP, on every single AJAX poll.
+			foreach ( $shows['items'] as $key => $show ) {
+				$show_dj = '';
+				if ( ! empty( $show['_links']['personas'][0]['href'] ) ) {
+					try {
+						$persona_url   = esc_url( $show['_links']['personas'][0]['href'] );
+						$persona_parts = explode( '/', $persona_url );
+						$persona_id    = end( $persona_parts );
+						$persona_array = $spinitron_player_client->fetch( 'personas', $persona_id );
+						$show_dj       = isset( $persona_array['name'] ) ? $persona_array['name'] : '';
+					} catch ( \Exception $e ) {
+						$show_dj = '';
+					}
+				}
+				$shows['items'][ $key ]['dj_name'] = $show_dj;
+
+				// Check if the image URL is valid
+				$show_image = ! empty( $show['image'] ) ? esc_url( $show['image'] ) : '';
+				if ( ! empty( $show_image ) ) {
+					$headers = @get_headers( $show_image );
+					if ( ! $headers || false === strpos( $headers[0], '200' ) ) {
+						$show_image = $fallback_image;
+					}
+				} else {
+					$show_image = $fallback_image;
+				}
+				$shows['items'][ $key ]['image'] = $show_image;
+			}
+
+			// Cache for 5 minutes, aligned to the wall-clock so all visitors
+			// refresh together. Guard against an expiration of exactly 0:
+			// WordPress treats set_transient(..., 0) as "never expire", which
+			// previously froze the display on whatever show was fetched at
+			// that instant (e.g. permanently stuck on an overnight show)
+			// instead of refreshing every 5 minutes as intended.
+			$current_time    = time();
+			$next_cache_time = ceil( $current_time / 300 ) * 300; // 300 seconds = 5 minutes
+			$expiration      = $next_cache_time - $current_time;
+			if ( $expiration < 1 ) {
+				$expiration = 300;
+			}
+
+			// Set the transient
+			set_transient( 'spinitron_show_today', $shows, $expiration );
+		} catch ( \Exception $e ) {
+			echo '<p>Unable to reach the Spinitron API right now. Please try again shortly.</p>';
 			wp_die();
 		}
-
-		// Calculate the number of seconds until the next multiple of 5 minutes
-		$current_time    = time();
-		$next_cache_time = ceil( $current_time / 300 ) * 300; // 300 seconds = 5 minutes
-		$expiration      = $next_cache_time - $current_time;
-
-		// Set the transient
-		set_transient( 'spinitron_show_today', $shows, $expiration );
 	}
 
 	ob_start();
@@ -68,26 +113,14 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 		$timezone    = isset( $show['timezone'] ) ? $show['timezone'] : 'America/Los_Angeles';
 		$tz          = new DateTimeZone( $timezone );
 		$show_title  = esc_html( $show['title'] );
-		$show_image  = esc_url( $show['image'] );
+		// Note: $show['image'] and $fallback_image are already esc_url()'d
+		// (above, and at the top of this function, respectively) — applying
+		// esc_url() again here would double-encode "&" in image query strings.
+		$show_image  = ! empty( $show['image'] ) ? $show['image'] : $fallback_image;
 		$show_start  = ( new DateTime( $show['start'] ) )->setTimezone( $tz );
 		$show_end    = ( new DateTime( $show['end'] ) )->setTimezone( $tz );
 		$time_now    = ( new DateTime( 'now' ) )->setTimezone( $tz );
-		$persona_url = esc_url( $show['_links']['personas'][0]['href'] );
-
-		$persona_parts = explode( '/', $persona_url );
-		$persona_id    = end( $persona_parts );
-		$persona_array = $spinitron_player_client->fetch( 'personas', $persona_id );
-		$show_dj       = esc_html( $persona_array['name'] );
-
-		// Check if the image URL is valid
-		if ( ! empty( $show_image ) ) {
-			$headers = @get_headers( $show_image );
-			if ( ! $headers || false === strpos( $headers[0], '200' ) ) {
-				$show_image = $fallback_image;
-			}
-		} else {
-			$show_image = $fallback_image;
-		}
+		$show_dj     = esc_html( isset( $show['dj_name'] ) ? $show['dj_name'] : '' );
 
 		$show_status = ( $show_start <= $time_now && $time_now <= $show_end ) ? 'On air' : 'Up next';
 

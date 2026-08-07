@@ -2,9 +2,9 @@
 Contributors: razorfrog
 Tags: spinitron, radio, music, player, stream
 Requires at least: 5.2
-Tested up to: 6.9
+Tested up to: 7.0.3
 Requires PHP: 7.2
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,11 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.1.0 =
+- Fixed a bug where the "today" show cache could be stored with no expiration, permanently freezing the display on whatever show happened to be airing at the moment the cache was rebuilt (most noticeably, sites getting stuck on an overnight/graveyard-slot show all day). Sites already affected are cleaned up automatically on update.
+- The DJ name and show-image lookups are now resolved once per 5-minute cache refresh instead of being re-fetched from the Spinitron API on every page view.
+- Hardened error handling around Spinitron API requests so a temporary API hiccup shows a friendly message instead of a broken response.
 
 = 1.0.9 =
 - Security updates

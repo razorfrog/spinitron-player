@@ -4,7 +4,7 @@
  * Plugin Name:       Spinitron Player
  * Plugin URI:        https://razorfrog.com/spinitron-player/
  * Description:       A streaming player for radio stations using Spinitron.
- * Version:           1.0.9
+ * Version:           1.1.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Razorfrog Web Design
@@ -15,6 +15,28 @@
  */
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
+
+define('SPINITRON_PLAYER_VERSION', '1.1.0');
+
+/**
+ * Clears the cached "today" show data whenever the plugin has been updated.
+ *
+ * Versions prior to 1.1.0 could cache the show transient with no
+ * expiration (a divide-aligned expiration calculation could land on
+ * exactly 0 seconds, which WordPress treats as "never expire"), freezing
+ * the display on whatever show was airing at that instant. Existing sites
+ * need this one-time cleanup on top of the code fix, since updating the
+ * plugin doesn't by itself clear a transient already stuck in the database.
+ *
+ * @return void
+ */
+function Spinitron_Player_maybe_upgrade() {
+    if ( get_option( 'spinitron_player_version' ) !== SPINITRON_PLAYER_VERSION ) {
+        delete_transient( 'spinitron_show_today' );
+        update_option( 'spinitron_player_version', SPINITRON_PLAYER_VERSION );
+    }
+}
+add_action( 'plugins_loaded', 'Spinitron_Player_maybe_upgrade' );
 
 /**
  * Enqueues plugin styles and scripts.

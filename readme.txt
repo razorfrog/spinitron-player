@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.2
 Tested up to: 7.0.3
 Requires PHP: 7.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,11 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.1.1 =
+- Cached show data is now served without contacting Spinitron at all; previously every player refresh still made one API request to check the key.
+- Show titles and DJ names containing characters like "&" are no longer double-escaped (e.g. "Rock &amp;amp; Roll").
+- Show images are checked with WordPress's HTTP API, following redirects.
 
 = 1.1.0 =
 - Fixed a bug where the "today" show cache could be stored with no expiration, permanently freezing the display on whatever show happened to be airing at the moment the cache was rebuilt (most noticeably, sites getting stuck on an overnight/graveyard-slot show all day). Sites already affected are cleaned up automatically on update.

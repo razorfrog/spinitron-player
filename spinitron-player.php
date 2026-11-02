@@ -4,7 +4,7 @@
  * Plugin Name:       Spinitron Player
  * Plugin URI:        https://razorfrog.com/spinitron-player/
  * Description:       A streaming player for radio stations using Spinitron.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Razorfrog Web Design
@@ -16,7 +16,7 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-define('SPINITRON_PLAYER_VERSION', '1.1.0');
+define('SPINITRON_PLAYER_VERSION', '1.1.1');
 
 /**
  * Clears the cached "today" show data whenever the plugin has been updated.

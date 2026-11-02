@@ -42,34 +42,8 @@ if ( ! empty( $spinitron_player_options ) && is_array( $spinitron_player_options
 
     if ( ! isset( $spinitron_player_client ) ) {
         $spinitron_player_client = new SpinitronApiClient( $spinitron_api_key );
-
-        // Validate API key by making a test request to the Spinitron API.
-        try {
-            $spinitron_test_response = $spinitron_player_client->search(
-                'shows',
-                array(
-                    'count'      => 1,
-                    'cache_bust' => time(),
-                )
-            );
-
-            if ( isset( $spinitron_test_response['error'] ) ) {
-                throw new Exception( 'Invalid API key' );
-            }
-
-            if ( empty( $spinitron_test_response['items'] ) ) {
-                throw new Exception( 'No shows found' );
-            }
-        } catch ( Exception $e ) {
-            if ( 'Invalid API key' === $e->getMessage() ) {
-                echo '<p>Invalid API key. Please make sure your Spinitron API key is valid.</p>';
-            } elseif ( 'No shows found' === $e->getMessage() ) {
-                echo '<p>No shows found. Please check the Spinitron API for available shows.</p>';
-            } else {
-                echo '<p>An unexpected error occurred. Please make sure your Spinitron API key is valid.</p>';
-            }
-            exit;
-        }
+        // The API key is checked by the first real request (see ajax-handler-today.php),
+        // so there's no separate test request here.
     }
 } else {
     echo '<p>Something went wrong. Please make sure your Spinitron API key is valid.</p>';

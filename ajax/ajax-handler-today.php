@@ -20,10 +20,6 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 		ob_clean();
 	}
 
-	require plugin_dir_path( __FILE__ ) . '../app/spinitron-get-client.php';
-
-	global $spinitron_player_client;
-
 	// Retrieve plugin options
 	$options              = get_option( 'spinitron_player_options' );
 	$separate_time_dj     = isset( $options['spinitron_player_field_separate_time_dj'] ) ? $options['spinitron_player_field_separate_time_dj'] : 0;
@@ -32,13 +28,19 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 	// Ensure the fallback image is set, since it's required
 	$fallback_image = '';
 	if ( isset( $options['spinitron_player_field_image_fallback'] ) && ! empty( $options['spinitron_player_field_image_fallback'] ) ) {
-		$fallback_image = esc_url( $options['spinitron_player_field_image_fallback'] );
+		$fallback_image = esc_url_raw( $options['spinitron_player_field_image_fallback'] );
 	}
 
 	// Try to get the transient
 	$shows = get_transient( 'spinitron_show_today' );
 
 	if ( false === $shows ) {
+		// Only set up the API client when the cache is empty, so cached polls
+		// don't call Spinitron at all.
+		require plugin_dir_path( __FILE__ ) . '../app/spinitron-get-client.php';
+
+		global $spinitron_player_client;
+
 		try {
 			// If the transient doesn't exist, fetch from API
 			$shows = $spinitron_player_client->search(
@@ -48,6 +50,11 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 					'cache_bust' => time(),
 				)
 			);
+
+			if ( isset( $shows['error'] ) ) {
+				echo '<p>Invalid API key. Please make sure your Spinitron API key is valid.</p>';
+				wp_die();
+			}
 
 			if ( empty( $shows['items'] ) ) {
 				echo '<p>No shows found. Please check the Spinitron API for available shows.</p>';
@@ -74,10 +81,16 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 				$shows['items'][ $key ]['dj_name'] = $show_dj;
 
 				// Check if the image URL is valid
-				$show_image = ! empty( $show['image'] ) ? esc_url( $show['image'] ) : '';
+				$show_image = ! empty( $show['image'] ) ? esc_url_raw( $show['image'] ) : '';
 				if ( ! empty( $show_image ) ) {
-					$headers = @get_headers( $show_image );
-					if ( ! $headers || false === strpos( $headers[0], '200' ) ) {
+					$image_response = wp_safe_remote_head(
+						$show_image,
+						array(
+							'timeout'     => 5,
+							'redirection' => 3,
+						)
+					);
+					if ( is_wp_error( $image_response ) || 200 !== (int) wp_remote_retrieve_response_code( $image_response ) ) {
 						$show_image = $fallback_image;
 					}
 				} else {
@@ -112,26 +125,25 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 	foreach ( $shows['items'] as $show ) {
 		$timezone    = isset( $show['timezone'] ) ? $show['timezone'] : 'America/Los_Angeles';
 		$tz          = new DateTimeZone( $timezone );
-		$show_title  = esc_html( $show['title'] );
-		// Note: $show['image'] and $fallback_image are already esc_url()'d
-		// (above, and at the top of this function, respectively) — applying
-		// esc_url() again here would double-encode "&" in image query strings.
+		// Raw values here; each is escaped once where it's printed below.
+		$show_title  = isset( $show['title'] ) ? $show['title'] : '';
+		// Image URLs are stored raw (esc_url_raw) and escaped once with esc_url() when printed.
 		$show_image  = ! empty( $show['image'] ) ? $show['image'] : $fallback_image;
 		$show_start  = ( new DateTime( $show['start'] ) )->setTimezone( $tz );
 		$show_end    = ( new DateTime( $show['end'] ) )->setTimezone( $tz );
 		$time_now    = ( new DateTime( 'now' ) )->setTimezone( $tz );
-		$show_dj     = esc_html( isset( $show['dj_name'] ) ? $show['dj_name'] : '' );
+		$show_dj     = isset( $show['dj_name'] ) ? $show['dj_name'] : '';
 
 		$show_status = ( $show_start <= $time_now && $time_now <= $show_end ) ? 'On air' : 'Up next';
 
 		echo '<div class="spinitron-player">';
 
 		if ( $duplicate_show_image ) {
-			echo '<img class="show-image-outter" src="' . esc_html( $show_image ) . '" alt="' . esc_attr( $show_title ) . '" />';
+			echo '<img class="show-image-outter" src="' . esc_url( $show_image ) . '" alt="' . esc_attr( $show_title ) . '" />';
 		}
 
 		echo '<div class="show-image">
-					<img src="' . esc_html( $show_image ) . '" alt="' . esc_attr( $show_title ) . '" />
+					<img src="' . esc_url( $show_image ) . '" alt="' . esc_attr( $show_title ) . '" />
 				</div>
 				<div class="show-details">
 					<p class="show-status">' . esc_html( $show_status ) . '</p>

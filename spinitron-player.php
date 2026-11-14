@@ -112,7 +112,7 @@ function Spinitron_Play_Button_shortcode() {
      $btn_class = 'spinitron-stream-button';
      ?>
      <!-- Button markup kept IDENTICAL to your original -->
-     <button id="spinitron-stream-button" class="spinitron-stream-button" aria-controls="radioStream" aria-label="<?php echo esc_attr(__('Play', 'spinitron-player')); ?>" role="button">
+     <button id="spinitron-stream-button" class="spinitron-stream-button" aria-controls="<?php echo esc_attr($audio_id); ?>" aria-label="<?php echo esc_attr(__('Play', 'spinitron-player')); ?>" role="button">
          <span class="spinitron-stream-button-text"><?php echo esc_html(__('Play', 'spinitron-player')); ?></span>
      </button>
 

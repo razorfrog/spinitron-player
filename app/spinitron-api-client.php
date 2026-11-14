@@ -26,7 +26,7 @@ if (!class_exists('SpinitronApiClient')) {
     class SpinitronApiClient
     {
         protected $api_base_url = 'https://spinitron.com/api';
-        private $_api_key;
+        private $api_key;
 
         /**
          * Constructor for the SpinitronApiClient class.

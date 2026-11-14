@@ -5,6 +5,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Returns the DJ of the playlist currently on air, when it belongs to the given show.
+ *
+ * Spinitron's "shows" are the schedule; a "playlist" is what a DJ starts when
+ * they go on air, and it carries its own DJ. When a substitute covers a show,
+ * the playlist names the substitute while the show still names the usual host.
+ *
+ * @param SpinitronApiClient $client          API client.
+ * @param array              $show            Show item from the "shows" endpoint.
+ * @param string             $show_persona_id ID of the show's own host, to skip a lookup when it's the same person.
+ * @return string DJ name, or '' when there is no playlist on air for this show, it has the same DJ as the show, or it can't be read.
+ */
+function spinitron_player_get_live_playlist_dj( $client, $show, $show_persona_id ) {
+	if ( empty( $show['id'] ) ) {
+		return '';
+	}
+
+	try {
+		$playlists = $client->search( 'playlists', array( 'count' => 1 ) );
+
+		if ( empty( $playlists['items'][0] ) || ! is_array( $playlists['items'][0] ) ) {
+			return '';
+		}
+
+		$playlist = $playlists['items'][0];
+
+		// An automation playlist has no person at the microphone: keep the show's host.
+		if ( ! empty( $playlist['automation'] ) ) {
+			return '';
+		}
+
+		if ( empty( $playlist['show_id'] ) || (string) $playlist['show_id'] !== (string) $show['id'] || empty( $playlist['persona_id'] ) ) {
+			return '';
+		}
+
+		// Only a playlist that is on air now, not the last one of an earlier broadcast.
+		$now   = time();
+		$start = ! empty( $playlist['start'] ) ? strtotime( $playlist['start'] ) : false;
+		$end   = ! empty( $playlist['end'] ) ? strtotime( $playlist['end'] ) : false;
+		if ( ! $start || ! $end || $now < $start || $now > $end ) {
+			return '';
+		}
+
+		if ( (string) $playlist['persona_id'] === (string) $show_persona_id ) {
+			return '';
+		}
+
+		$persona = $client->fetch( 'personas', absint( $playlist['persona_id'] ) );
+
+		return isset( $persona['name'] ) ? (string) $persona['name'] : '';
+	} catch ( \Exception $e ) {
+		return '';
+	}
+}
+
+/**
  * Handles AJAX request to fetch the current Spinitron show for the 'TODAY' layout.
  * @return void
  */
@@ -78,6 +133,16 @@ function spinitron_player_fetch_spinitron_show_today_callback() {
 						$show_dj = '';
 					}
 				}
+				// A playlist on air for this show names who is actually at the
+				// microphone, which differs from the scheduled host when someone
+				// is filling in. Prefer that DJ; keep the host if it can't be read.
+				$show_persona_id = isset( $persona_id ) ? (string) $persona_id : '';
+				$live_dj         = spinitron_player_get_live_playlist_dj( $spinitron_player_client, $show, $show_persona_id );
+				if ( '' !== $live_dj ) {
+					$show_dj = $live_dj;
+				}
+				unset( $persona_id );
+
 				$shows['items'][ $key ]['dj_name'] = $show_dj;
 
 				// Check if the image URL is valid

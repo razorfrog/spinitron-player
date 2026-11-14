@@ -1,10 +1,10 @@
 === Spinitron Player ===
 Contributors: razorfrog
 Tags: spinitron, radio, music, player, stream
-Requires at least: 5.2
+Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ This plugin makes use of the Spinitron API to fetch and display live radio show 
 - Spinitron Website: https://spinitron.com/
 - Spinitron API Documentation: https://spinitron.github.io/v2api/
 
-Show images, and track cover art when `[spinitron_recent_tracks art="yes"]` is used, are loaded by the visitor's browser from the image addresses Spinitron supplies. Cover art is often hosted by a third party such as Apple (mzstatic.com).
+Show images, and track cover art in `[spinitron_playlists]` and in `[spinitron_recent_tracks art="yes"]`, are loaded by the visitor's browser from the image addresses Spinitron supplies. Cover art is often hosted by a third party such as Apple (mzstatic.com).
 
 == Legal and Privacy==
 Please review Spinitron's Terms of Use and Privacy Policy to understand the data usage and legal considerations:
@@ -39,10 +39,15 @@ The following shortcodes are available:
 - `[spinitron_player]` - For Spinitron live player interface.
 - `[spinitron_play_button]` - For stream play button.
 - `[spinitron_recent_tracks]` - For a list of the most recent tracks played, refreshed every 30 seconds. Options: `count` (1 to 20, default 5) and `art` (`yes` to show cover art), e.g. `[spinitron_recent_tracks count="10" art="yes"]`.
+- `[spinitron_playlists]` - Past playlists and their tracks, on your own site. Put it on one page: it lists the station's recent playlists, newest first, and each one links to its tracks on the same page. Link to the page with `?show_id=<Spinitron show ID>` to list one show's playlists. Options: `show_id` (always that show), `per_page` (1 to 50, default 10), `art` (`no` to hide cover art) and `automation` (`yes` to list automation playlists too), e.g. `[spinitron_playlists per_page="20"]`.
 
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.3.0 =
+- New `[spinitron_playlists]` shortcode: a station's or a show's past playlists, and each playlist's tracks (time, artist, song, release, label and cover art), rendered on your own site. Automation playlists and Spinitron's empty duplicate playlists are left out. Data is cached: finished playlists for a day, the playlist on air for 2 minutes. The API key never reaches the browser.
+- Now requires WordPress 5.3.
 
 = 1.2.0 =
 - New `[spinitron_recent_tracks]` shortcode: a list of the most recent tracks played (time, artist, song and release, with optional cover art) that refreshes every 30 seconds. Spinitron is contacted at most once every 30 seconds, however many visitors are on the page.

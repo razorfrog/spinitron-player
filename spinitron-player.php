@@ -4,8 +4,8 @@
  * Plugin Name:       Spinitron Player
  * Plugin URI:        https://razorfrog.com/spinitron-player/
  * Description:       A streaming player for radio stations using Spinitron.
- * Version:           1.2.0
- * Requires at least: 5.2
+ * Version:           1.3.0
+ * Requires at least: 5.3
  * Requires PHP:      7.2
  * Author:            Razorfrog Web Design
  * Author URI:        https://razorfrog.com/
@@ -16,7 +16,7 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-define('SPINITRON_PLAYER_VERSION', '1.2.0');
+define('SPINITRON_PLAYER_VERSION', '1.3.0');
 
 /**
  * Clears the cached "today" show data whenever the plugin has been updated.
@@ -75,6 +75,9 @@ include plugin_dir_path(__FILE__) . 'ajax/ajax-handler-today.php';
 
 // Include the AJAX handler for the recent tracks list
 include plugin_dir_path(__FILE__) . 'ajax/ajax-handler-tracks.php';
+
+// The [spinitron_playlists] shortcode (show playlists and their tracks)
+include plugin_dir_path(__FILE__) . 'app/playlists.php';
 
 /**
  * Implements the shortcode for Spinitron Player.

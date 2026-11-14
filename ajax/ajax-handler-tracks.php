@@ -133,6 +133,9 @@ function spinitron_player_fetch_spinitron_recent_tracks_callback() {
 		if ( $show_art && '' !== $spin['image'] ) {
 			// Decorative: the artist, song and release are in the text beside it.
 			echo '<img class="track-art" src="' . esc_url( $spin['image'] ) . '" alt="" width="50" height="50" loading="lazy" />';
+		} elseif ( $show_art ) {
+			// No cover for this track: keep its text lined up with the others.
+			echo '<span class="track-art track-art-empty" aria-hidden="true"></span>';
 		}
 
 		echo '<span class="track-text">';

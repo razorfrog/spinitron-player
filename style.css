@@ -70,6 +70,11 @@
     flex: none;
 }
 
+.spinitron-recent-tracks .track-art-empty {
+    display: block;
+    background: #f1f1f1;
+}
+
 .spinitron-recent-tracks .track-text {
     flex: 1;
     min-width: 0;

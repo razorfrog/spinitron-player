@@ -45,3 +45,56 @@
     font-size: 14px;
     margin: 0;
 }
+
+
+/* Recent tracks: [spinitron_recent_tracks] */
+
+.spinitron-recent-tracks .spinitron-tracks {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+}
+
+.spinitron-recent-tracks .spinitron-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+.spinitron-recent-tracks .track-art {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    flex: none;
+}
+
+.spinitron-recent-tracks .track-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.spinitron-recent-tracks .track-artist {
+    font-weight: 700;
+}
+
+.spinitron-recent-tracks .track-song {
+    font-style: italic;
+}
+
+.spinitron-recent-tracks .track-song::before {
+    content: open-quote;
+}
+
+.spinitron-recent-tracks .track-song::after {
+    content: close-quote;
+}
+
+.spinitron-recent-tracks .track-release::before {
+    content: "from ";
+}
+
+.spinitron-recent-tracks .spinitron-tracks-message {
+    margin: 0 0 20px;
+}

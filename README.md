@@ -4,7 +4,7 @@ The Spinitron Player plugin integrates live streaming and playlist data from Spi
 
 - **WordPress.org:** https://wordpress.org/plugins/spinitron-player/
 - **Plugin page:** https://razorfrog.com/spinitron-player/
-- **Current release:** 1.1.0 · requires WordPress 5.2 and PHP 7.2 · tested up to WordPress 7.0.3
+- **Current release:** 1.2.0 · requires WordPress 5.2 and PHP 7.2 · tested up to WordPress 7.1
 - **License:** GPLv2 or later
 
 `readme.txt` is the WordPress.org plugin page (description, FAQ, changelog). For help, use the plugin's support forum on WordPress.org.

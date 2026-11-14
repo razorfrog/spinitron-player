@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,10 +36,14 @@ The following shortcodes are available:
 
 - `[spinitron_player]` - For Spinitron live player interface.
 - `[spinitron_play_button]` - For stream play button.
+- `[spinitron_recent_tracks]` - For a list of the most recent tracks played, refreshed every 30 seconds. Options: `count` (1 to 20, default 5) and `art` (`yes` to show cover art), e.g. `[spinitron_recent_tracks count="10" art="yes"]`.
 
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.2.0 =
+- New `[spinitron_recent_tracks]` shortcode: a list of the most recent tracks played (time, artist, song and release, with optional cover art) that refreshes every 30 seconds. Spinitron is contacted at most once every 30 seconds, however many visitors are on the page.
 
 = 1.1.2 =
 - The Play button no longer streams another station by default. With no Livestream URL saved, visitors see nothing and editors see a reminder to add one in the settings.

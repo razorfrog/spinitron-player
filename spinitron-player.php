@@ -4,7 +4,7 @@
  * Plugin Name:       Spinitron Player
  * Plugin URI:        https://razorfrog.com/spinitron-player/
  * Description:       A streaming player for radio stations using Spinitron.
- * Version:           1.1.2
+ * Version:           1.2.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Razorfrog Web Design
@@ -16,7 +16,7 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-define('SPINITRON_PLAYER_VERSION', '1.1.2');
+define('SPINITRON_PLAYER_VERSION', '1.2.0');
 
 /**
  * Clears the cached "today" show data whenever the plugin has been updated.
@@ -33,6 +33,7 @@ define('SPINITRON_PLAYER_VERSION', '1.1.2');
 function Spinitron_Player_maybe_upgrade() {
     if ( get_option( 'spinitron_player_version' ) !== SPINITRON_PLAYER_VERSION ) {
         delete_transient( 'spinitron_show_today' );
+        delete_transient( 'spinitron_recent_tracks' );
         update_option( 'spinitron_player_version', SPINITRON_PLAYER_VERSION );
     }
 }
@@ -56,6 +57,13 @@ function Spinitron_Player_Enqueue_assets() {
     wp_localize_script('spinitron-player-fetch-today', 'spinitron_params', array(
         'ajax_url' => admin_url('admin-ajax.php'),
     ));
+
+    // Registered here, loaded only on pages that use [spinitron_recent_tracks].
+    $tracks_js_url = plugin_dir_url(__FILE__) . 'js/spinitron-fetch-tracks.js';
+    wp_register_script('spinitron-player-fetch-tracks', $tracks_js_url, array(), SPINITRON_PLAYER_VERSION, true);
+    wp_localize_script('spinitron-player-fetch-tracks', 'spinitron_tracks_params', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+    ));
 }
 add_action('wp_enqueue_scripts', 'Spinitron_Player_Enqueue_assets');
 
@@ -64,6 +72,9 @@ include plugin_dir_path(__FILE__) . 'app/plugin-settings.php';
 
 // Include the AJAX handler for fetching show data
 include plugin_dir_path(__FILE__) . 'ajax/ajax-handler-today.php';
+
+// Include the AJAX handler for the recent tracks list
+include plugin_dir_path(__FILE__) . 'ajax/ajax-handler-tracks.php';
 
 /**
  * Implements the shortcode for Spinitron Player.
@@ -86,6 +97,33 @@ function Spinitron_Player_shortcode() {
     return ob_get_clean();
 }
 add_shortcode('spinitron_player', 'Spinitron_Player_shortcode');
+
+/**
+ * Implements the shortcode for the recent tracks list.
+ *
+ * Prints an empty list that js/spinitron-fetch-tracks.js fills and refreshes
+ * every 30 seconds, so the tracks stay current on cached pages.
+ * Usage: [spinitron_recent_tracks] or [spinitron_recent_tracks count="10" art="yes"]
+ *
+ * @param array|string $atts Shortcode attributes: count (1 to 20, default 5), art (yes/no, default no).
+ * @return string The HTML content for the recent tracks container.
+ */
+function Spinitron_Player_Recent_Tracks_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'count' => 5,
+        'art'   => 'no',
+    ), $atts, 'spinitron_recent_tracks');
+
+    $count = max(1, min(SPINITRON_PLAYER_TRACKS_MAX, absint($atts['count'])));
+    $art   = in_array(strtolower(trim((string) $atts['art'])), array('yes', 'true', '1', 'on'), true) ? '1' : '0';
+
+    wp_enqueue_script('spinitron-player-fetch-tracks');
+
+    return '<div class="spinitron-recent-tracks" data-count="' . esc_attr($count) . '" data-art="' . esc_attr($art) . '">'
+        . '<p class="spinitron-tracks-message">' . esc_html__('Loading...', 'spinitron-player') . '</p>'
+        . '</div>';
+}
+add_shortcode('spinitron_recent_tracks', 'Spinitron_Player_Recent_Tracks_shortcode');
 
 /**
  * Renders a play button for a radio stream.

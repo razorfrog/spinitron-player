@@ -44,6 +44,7 @@ We will be working on new UI options in future releases.
 
 = 1.2.0 =
 - New `[spinitron_recent_tracks]` shortcode: a list of the most recent tracks played (time, artist, song and release, with optional cover art) that refreshes every 30 seconds. Spinitron is contacted at most once every 30 seconds, however many visitors are on the page.
+- The player now names the DJ who is on air when a playlist is running for the current show, so a substitute DJ is shown instead of the show's usual host.
 
 = 1.1.2 =
 - The Play button no longer streams another station by default. With no Livestream URL saved, visitors see nothing and editors see a reminder to add one in the settings.

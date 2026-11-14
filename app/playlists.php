@@ -230,6 +230,8 @@ function spinitron_player_playlists_url( $args ) {
  *   per_page   playlists per page, 1 to 50, default 10
  *   art        yes/no, cover art beside each track, default yes
  *   automation yes/no, list automation playlists too, default no
+ *   station    Spinitron station slug (e.g. KZSC); adds a link to each playlist on spinitron.com,
+ *              where recent shows can be played back
  *
  * @param array|string $atts Shortcode attributes.
  * @return string HTML.
@@ -241,6 +243,7 @@ function spinitron_player_playlists_shortcode( $atts ) {
 			'per_page'   => 10,
 			'art'        => 'yes',
 			'automation' => 'no',
+			'station'    => '',
 		),
 		$atts,
 		'spinitron_playlists'
@@ -260,6 +263,8 @@ function spinitron_player_playlists_shortcode( $atts ) {
 		'art'        => in_array( strtolower( trim( (string) $atts['art'] ) ), $yes, true ),
 		'automation' => in_array( strtolower( trim( (string) $atts['automation'] ) ), $yes, true ),
 		'fixed_show' => $fixed_show,
+		// Spinitron's station slug, as in spinitron.com/KZSC/; letters, digits, - and _ only.
+		'station'    => preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $atts['station'] ),
 	);
 
 	if ( $playlist_id ) {
@@ -471,6 +476,15 @@ function spinitron_player_render_playlist( $playlist_id, $show_id, $options ) {
 		$out .= ' <span class="playlist-live">' . esc_html__( 'On air now', 'spinitron-player' ) . '</span>';
 	}
 	$out .= '</p>';
+
+	if ( '' !== $options['station'] ) {
+		// Spinitron's own playlist page plays the station's archive recording for about two weeks.
+		$recent = isset( $playlist['end'] ) && strtotime( $playlist['end'] ) > time() - 14 * DAY_IN_SECONDS;
+		$link   = 'https://spinitron.com/' . rawurlencode( $options['station'] ) . '/pl/' . $playlist_id . '/';
+		$out   .= '<p class="spinitron-playlist-source"><a href="' . esc_url( $link ) . '" target="_blank" rel="noopener">'
+			. ( $recent && ! $live ? esc_html__( 'Listen to this show on Spinitron', 'spinitron-player' ) : esc_html__( 'This playlist on Spinitron', 'spinitron-player' ) )
+			. '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'spinitron-player' ) . '</span></a></p>';
+	}
 
 	if ( ! empty( $playlist['episode_name'] ) ) {
 		$out .= '<p class="spinitron-playlist-episode">' . esc_html( $playlist['episode_name'] ) . '</p>';

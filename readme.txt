@@ -39,7 +39,7 @@ The following shortcodes are available:
 - `[spinitron_player]` - For Spinitron live player interface.
 - `[spinitron_play_button]` - For stream play button.
 - `[spinitron_recent_tracks]` - For a list of the most recent tracks played, refreshed every 30 seconds. Options: `count` (1 to 20, default 5) and `art` (`yes` to show cover art), e.g. `[spinitron_recent_tracks count="10" art="yes"]`.
-- `[spinitron_playlists]` - Past playlists and their tracks, on your own site. Put it on one page: it lists the station's recent playlists, newest first, and each one links to its tracks on the same page. Link to the page with `?show_id=<Spinitron show ID>` to list one show's playlists. Options: `show_id` (always that show), `per_page` (1 to 50, default 10), `art` (`no` to hide cover art) and `automation` (`yes` to list automation playlists too), e.g. `[spinitron_playlists per_page="20"]`.
+- `[spinitron_playlists]` - Past playlists and their tracks, on your own site. Put it on one page: it lists the station's recent playlists, newest first, and each one links to its tracks on the same page. Link to the page with `?show_id=<Spinitron show ID>` to list one show's playlists. Options: `show_id` (always that show), `per_page` (1 to 50, default 10), `art` (`no` to hide cover art) `automation` (`yes` to list automation playlists too) and `station` (your Spinitron station name as in its web address, e.g. `KZSC`, to link each playlist to its page on spinitron.com, where recent shows can be played back), e.g. `[spinitron_playlists per_page="20"]`.
 
 We will be working on new UI options in future releases.
 

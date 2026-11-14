@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,12 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.1.2 =
+- The Play button no longer streams another station by default. With no Livestream URL saved, visitors see nothing and editors see a reminder to add one in the settings.
+- The stylesheet and script are now versioned with the plugin, so changes are no longer cached after an update.
+- Fixed a PHP 8.2 deprecation notice in the Spinitron API client.
+- Accessibility: the Play button now points at the audio element it controls.
 
 = 1.1.1 =
 - Cached show data is now served without contacting Spinitron at all; previously every player refresh still made one API request to check the key.

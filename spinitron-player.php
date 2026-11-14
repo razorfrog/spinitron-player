@@ -4,7 +4,7 @@
  * Plugin Name:       Spinitron Player
  * Plugin URI:        https://razorfrog.com/spinitron-player/
  * Description:       A streaming player for radio stations using Spinitron.
- * Version:           1.1.1
+ * Version:           1.1.2
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Razorfrog Web Design
@@ -16,7 +16,7 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-define('SPINITRON_PLAYER_VERSION', '1.1.1');
+define('SPINITRON_PLAYER_VERSION', '1.1.2');
 
 /**
  * Clears the cached "today" show data whenever the plugin has been updated.
@@ -46,12 +46,12 @@ add_action( 'plugins_loaded', 'Spinitron_Player_maybe_upgrade' );
 function Spinitron_Player_Enqueue_assets() {
     // Enqueue the plugin's CSS file
     $css_url = plugin_dir_url(__FILE__) . 'style.css';
-    $css_version = '1.0.5';
+    $css_version = SPINITRON_PLAYER_VERSION;
     wp_enqueue_style('spinitron-player-styles', $css_url, array(), $css_version);
 
     // Enqueue the JavaScript file for fetching show data
     $js_url = plugin_dir_url(__FILE__) . 'js/spinitron-fetch-today.js';
-    $js_version = '1.0.5';
+    $js_version = SPINITRON_PLAYER_VERSION;
     wp_enqueue_script('spinitron-player-fetch-today', $js_url, array('jquery'), $js_version, true);
     wp_localize_script('spinitron-player-fetch-today', 'spinitron_params', array(
         'ajax_url' => admin_url('admin-ajax.php'),
@@ -100,12 +100,19 @@ add_shortcode('spinitron_player', 'Spinitron_Player_shortcode');
 function Spinitron_Play_Button_shortcode() {
      ob_start();
 
-     // Get URL from settings safely, with a fallback for testing
+     // Get the livestream URL from settings. There is no default stream: with no URL saved, show nothing to visitors.
      $opts = get_option('spinitron_player_options', array());
      if (!is_array($opts)) { $opts = array(); }
      $stream_url = !empty($opts['spinitron_player_field_stream_url'])
          ? $opts['spinitron_player_field_stream_url']
-         : 'https://kspc.radioca.st/stream?type=http&nocache=41177';
+         : '';
+     if ('' === $stream_url) {
+         ob_end_clean();
+         if (current_user_can('manage_options')) {
+             return '<p>' . esc_html__('Spinitron Player: add a Livestream URL in the plugin settings to show the Play button.', 'spinitron-player') . '</p>';
+         }
+         return '';
+     }
 
      // Hidden shared audio id; button markup remains unchanged
      $audio_id  = 'spinitron-stream-shared-hidden';

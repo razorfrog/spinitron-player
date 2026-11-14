@@ -30,6 +30,11 @@ function spinitron_player_get_live_playlist_dj( $client, $show, $show_persona_id
 
 		$playlist = $playlists['items'][0];
 
+		// An automation playlist has no person at the microphone: keep the show's host.
+		if ( ! empty( $playlist['automation'] ) ) {
+			return '';
+		}
+
 		if ( empty( $playlist['show_id'] ) || (string) $playlist['show_id'] !== (string) $show['id'] || empty( $playlist['persona_id'] ) ) {
 			return '';
 		}

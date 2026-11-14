@@ -19,6 +19,8 @@ This plugin makes use of the Spinitron API to fetch and display live radio show 
 - Spinitron Website: https://spinitron.com/
 - Spinitron API Documentation: https://spinitron.github.io/v2api/
 
+Show images, and track cover art when `[spinitron_recent_tracks art="yes"]` is used, are loaded by the visitor's browser from the image addresses Spinitron supplies. Cover art is often hosted by a third party such as Apple (mzstatic.com).
+
 == Legal and Privacy==
 Please review Spinitron's Terms of Use and Privacy Policy to understand the data usage and legal considerations:
 

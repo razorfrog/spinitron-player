@@ -43,7 +43,14 @@ function spinitron_player_get_recent_tracks() {
 		$response = $spinitron_player_client->search( 'spins', array( 'count' => SPINITRON_PLAYER_TRACKS_MAX ) );
 
 		if ( ! is_array( $response ) || ! isset( $response['items'] ) || ! is_array( $response['items'] ) ) {
-			$error = __( 'Invalid API key. Please make sure your Spinitron API key is valid.', 'spinitron-player' );
+			// Spinitron answers errors with a JSON body carrying the HTTP status.
+			// Only 401/403 mean the key is wrong; anything else is an outage or rate limit.
+			$status = ( is_array( $response ) && isset( $response['status'] ) ) ? (int) $response['status'] : 0;
+			if ( 401 === $status || 403 === $status ) {
+				$error = __( 'Invalid API key. Please make sure your Spinitron API key is valid.', 'spinitron-player' );
+			} else {
+				$error = __( 'Unable to reach the Spinitron API right now. Please try again shortly.', 'spinitron-player' );
+			}
 		} else {
 			// Keep only the fields the list prints, so the cached value stays small.
 			foreach ( $response['items'] as $spin ) {
@@ -53,7 +60,8 @@ function spinitron_player_get_recent_tracks() {
 					'artist'   => isset( $spin['artist'] ) ? (string) $spin['artist'] : '',
 					'song'     => isset( $spin['song'] ) ? (string) $spin['song'] : '',
 					'release'  => isset( $spin['release'] ) ? (string) $spin['release'] : '',
-					'image'    => ! empty( $spin['image'] ) ? esc_url_raw( $spin['image'] ) : '',
+					// On an HTTPS site an http:// cover would be blocked as mixed content.
+					'image'    => ! empty( $spin['image'] ) ? esc_url_raw( is_ssl() ? set_url_scheme( $spin['image'], 'https' ) : $spin['image'] ) : '',
 				);
 			}
 		}

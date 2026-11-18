@@ -4,7 +4,7 @@ Tags: spinitron, radio, music, player, stream
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,9 @@ The following shortcodes are available:
 We will be working on new UI options in future releases.
 
 == Changelog ==
+
+= 1.2.1 =
+- Razorfrog sidebar with help, review and our other plugins on the settings page.
 
 = 1.2.0 =
 - New `[spinitron_recent_tracks]` shortcode: a list of the most recent tracks played (time, artist, song and release, with optional cover art) that refreshes every 30 seconds. Spinitron is contacted at most once every 30 seconds, however many visitors are on the page.

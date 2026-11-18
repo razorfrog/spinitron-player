@@ -1,0 +1,109 @@
+/* Razorfrog header and sidebar. */
+
+.spinp-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 16px 0 8px;
+}
+
+.spinp-header img {
+	border-radius: 10px;
+}
+
+.spinp-wrap .spinp-header h1 {
+	padding: 0;
+	margin: 0;
+	line-height: 1.2;
+}
+
+.spinp-header p {
+	margin: 2px 0 0;
+	color: #646970;
+}
+
+.spinp-layout {
+	display: flex;
+	align-items: flex-start;
+	gap: 24px;
+}
+
+.spinp-main {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.spinp-sidebar {
+	flex: 0 0 280px;
+	margin-top: 20px;
+}
+
+.spinp-box {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 16px;
+	margin-bottom: 16px;
+}
+
+.spinp-box h2 {
+	font-size: 14px;
+	margin: 0 0 10px;
+}
+
+.spinp-about {
+	border-top: 4px solid #1aa38c;
+}
+
+.spinp-logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+	text-decoration: none;
+}
+
+.spinp-logo img {
+	border-radius: 8px;
+}
+
+.spinp-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 0;
+}
+
+.spinp-plugins {
+	margin: 0;
+}
+
+.spinp-plugins li {
+	margin: 0 0 10px;
+}
+
+.spinp-plugins li:last-child {
+	margin-bottom: 0;
+}
+
+.spinp-plugins a {
+	font-weight: 600;
+}
+
+.spinp-plugins span {
+	display: block;
+	color: #646970;
+	font-size: 12px;
+}
+
+@media screen and (max-width: 960px) {
+	.spinp-layout {
+		display: block;
+	}
+
+	.spinp-sidebar {
+		max-width: 520px;
+	}
+}

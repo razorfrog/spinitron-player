@@ -166,8 +166,25 @@ function Spinitron_Player_Options_Page_html() {
 		settings_errors('spinitron_player_messages');
 
 		?>
-		<div class="wrap">
-				<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+		<div class="wrap spinp-wrap">
+				<div class="spinp-header">
+			<img src="<?php echo esc_url( plugins_url( 'assets/razorfrog-icon.png', dirname( __FILE__ ) ) ); ?>" alt="" width="48" height="48" />
+			<div>
+				<h1><?php esc_html_e( 'Spinitron Player', 'spinitron-player' ); ?></h1>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: Razorfrog, linked to its website. */
+						esc_html__( 'by %s', 'spinitron-player' ),
+						'<a href="https://razorfrog.com/" target="_blank" rel="noopener noreferrer">Razorfrog</a>'
+					);
+					?>
+					&middot; <?php echo esc_html( sprintf( /* translators: %s: plugin version. */ __( 'Version %s', 'spinitron-player' ), SPINITRON_PLAYER_VERSION ) ); ?>
+				</p>
+			</div>
+		</div>
+				<div class="spinp-layout">
+				<div class="spinp-main">
 				<form action="options.php" method="post">
 						<?php
 						settings_fields('spinitron_player');
@@ -175,8 +192,52 @@ function Spinitron_Player_Options_Page_html() {
 						submit_button(__('Save Settings', 'spinitron-player'));
 						?>
 				</form>
+				</div>
+				<?php spinitron_player_sidebar(); ?>
+				</div>
 		</div>
 		<?php
+}
+
+/**
+ * The Razorfrog sidebar: who makes the plugin, where to get help, and our other plugins.
+ */
+function spinitron_player_sidebar() {
+	$wporg   = 'https://wordpress.org/plugins/';
+	$plugins = array(
+			'cinza-grid' => array( 'Cinza Grid', __( 'A minimal grid plugin built with Isotope.', 'spinitron-player' ) ),
+			'cinza-slider' => array( 'Cinza Slider', __( 'A minimal slider plugin built with Flickity.', 'spinitron-player' ) ),
+			'easy-content-lists' => array( 'Easy Content Lists', __( 'Shortcodes for listing your pages, posts, taxonomies and tags.', 'spinitron-player' ) ),
+			'woo-product-dropdown-widget' => array( 'Product Dropdown Widget for WooCommerce', __( 'A dropdown of WooCommerce products, by category, sorted by price, reviews or more.', 'spinitron-player' ) ),
+			'bulk-convert-post-format' => array( 'Bulk Convert Post Format', __( 'Converts all posts in a category to a chosen post format.', 'spinitron-player' ) ),
+			'link-in-bio-report' => array( 'Link in Bio Report', __( 'Counts taps on your Instagram links page and emails a weekly report.', 'spinitron-player' ) ),
+	);
+	?>
+	<div class="spinp-sidebar">
+		<div class="spinp-box spinp-about">
+			<a href="https://razorfrog.com/" target="_blank" rel="noopener noreferrer" class="spinp-logo">
+				<img src="<?php echo esc_url( plugins_url( 'assets/razorfrog-icon.png', dirname( __FILE__ ) ) ); ?>" alt="" width="40" height="40" />
+				<span>Razorfrog</span>
+			</a>
+			<p><?php esc_html_e( 'Spinitron Player is a free plugin by Razorfrog, a web agency in San Francisco.', 'spinitron-player' ); ?></p>
+			<p class="spinp-buttons">
+				<a class="button" href="https://wordpress.org/support/plugin/spinitron-player/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Get help', 'spinitron-player' ); ?></a>
+				<a class="button" href="https://wordpress.org/support/plugin/spinitron-player/reviews/#new-post" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Leave a review', 'spinitron-player' ); ?></a>
+			</p>
+		</div>
+		<div class="spinp-box">
+			<h2><?php esc_html_e( 'More free plugins from Razorfrog', 'spinitron-player' ); ?></h2>
+			<ul class="spinp-plugins">
+				<?php foreach ( $plugins as $plugin_slug => $plugin ) : ?>
+					<li>
+						<a href="<?php echo esc_url( $wporg . $plugin_slug . '/' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $plugin[0] ); ?></a>
+						<span><?php echo esc_html( $plugin[1] ); ?></span>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	</div>
+	<?php
 }
 
 /**
@@ -187,6 +248,12 @@ function Spinitron_Player_Options_Page_html() {
 function spinitron_player_admin_styles($hook_suffix) {
 		// Check if we're on the Spinitron Player settings page
 		if ($hook_suffix == 'settings_page_spinitron_player') {
+				wp_enqueue_style(
+						'spinitron-player-admin',
+						plugins_url('assets/admin.css', dirname(__FILE__)),
+						array(),
+						(string) filemtime(plugin_dir_path(dirname(__FILE__)) . 'assets/admin.css')
+				);
 				wp_add_inline_style('wp-admin', '
 						.form-table {
 								max-width: 1000px;
